@@ -17,74 +17,23 @@ export default class CommonLoginView extends React.Component {
     this.props.app.sessionWillLoadHandler = this.sessionWillLoadHandler;
     this.props.app.sessionDidLoadHandler = this.sessionDidLoadHandler;
     this.props.app.sessionDidFailLoadHandler = this.sessionDidFailLoadHandler;
-    //Login direct call
-    this.props.app.idm.sessionLoadErrorHandler = this.idmLoginErrorHandler.bind(this);
+    //Login direct call -- this should be uncommented if config.externalAuth is not enabled
+    //this.props.app.idm.sessionLoadErrorHandler = this.idmLoginErrorHandler.bind(this);
   }
 
-  componentDidMount() {
-    document.title = `Sign in - ${config.ApplicationName}`;
-  }
+  componentDidMount() { document.title = `Sign in - ${config.ApplicationName}`; }
 
   //session delegate -
-  sessionWillLoadHandler() {
-    this.startLoading();
-  }
-  sessionDidLoadHandler() {
-    this.stopLoading(); //most of the cases it will be umounted already
-  }
+  sessionWillLoadHandler() { this.startLoading(); }
+  sessionDidLoadHandler() { this.stopLoading(); }
   sessionDidFailLoadHandler(err) {
     if (!err) err = 'Could not load application information. Please, check your internet connection.';
     this.props.alertController.showErrorAlert('Error!', err);
     if (this._isMounted) this.stopLoading();
   }
-  //Handle login cases from User interaction and IDM clients redirect
-  async idmLoginErrorHandler(loginResp, username, isRenew) {
-    if (loginResp.statusCode == 400) {
-      this.props.alertController.showAPIErrorAlert(null, loginResp);
-    } else if (loginResp.statusCode == 200 || loginResp.statusCode == 401) {
-      const challengeState = (loginResp.body && loginResp.body.challengeState ? loginResp.body.challengeState :
-                              (loginResp.body && loginResp.body.errCode ? loginResp.body.errCode : ''));
-      //Success
-      if (challengeState == IDMGlobals.AuthorizationChallengeState_Authorized) {
-        this.props.alertController.showSuccessAlert("", `Welcome ${this.props.app.idm.session.data.getUserObject().firstName}!`); //welcome message
-        this.props.app.pushPage(config.ApplicationRoutes.homepage); //push to main page
-      }
-      //Reset pass required
-      else if (challengeState == IDMGlobals.AuthorizationChallengeState_PasswordResetRequired) {
-        this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
-        this.props.app.pushPage(config.ApplicationRoutes.resetPasswordConfirmation, null, username); //push to main page
-      }
-      //New pass required
-      else if (challengeState == IDMGlobals.AuthorizationChallengeState_NewPasswordRequired) {
-        this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
-        this.props.app.pushPage(config.ApplicationRoutes.setupPassword, null, username, loginResp.body.challengeContext); //push to main page
-      }
-      //Confirmation required
-      else if (challengeState == IDMGlobals.AuthorizationChallengeState_ConfirmationRequired) {
-        this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
-        console.log(loginResp)
-        this.props.app.pushPage(config.ApplicationRoutes.registrationConfirmation, null, Globals.URL_Path_ID_Placeholder, username); //push to main page
-      }
-      //Handling auth challenges errors
-      else if (challengeState != IDMGlobals.AuthorizationChallengeState_Forbidden &&
-               challengeState != IDMGlobals.AuthorizationChallengeState_NotFound) {
-        this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
-        this.props.app.pushViewWithState(config.ApplicationRoutes.authError, null, null, null, loginResp.body); //push to main page
-      }
-      //Unhandled error
-      else if (!isRenew) {
-        this.props.alertController.showAPIErrorAlert("Login error!", loginResp);
-      }
-    } else { //probably connection error or server is offline :/
-      this.props.alertController.showAPIErrorAlert("Unknown error!", JSON.stringify(loginResp));
-    }
-    this.stopLoading();
-  }
 
   // Util
-  startLoading() {
-    this.setState({ isLoading: true });
-  }
+  startLoading() { this.setState({ isLoading: true }); }
   stopLoading(setState) {
     if (setState == undefined) setState = true;
     this.state.isLoading = false;
@@ -95,7 +44,10 @@ export default class CommonLoginView extends React.Component {
   async handleSignin(e) {
     if (e) e.preventDefault();
     this.startLoading();
-    await this.props.app.idm.authenticator.login(this.emailInput.state.value, this.passwordInput.state.value, null, true /* remeber me */);
+    //Redirects to IDM and wait redirect back
+    await this.props.app.idm.authenticator.login(this.emailInput.state.value, null, config.IDMClientOptions.roles.USER, window.location);
+    //To directly call API, config.externalAuth should be false when the following call should be user
+    //await this.props.app.idm.authenticator.login(email, password);
   }
   handleRegistration(e) {
     e.preventDefault();
@@ -123,11 +75,6 @@ export default class CommonLoginView extends React.Component {
                       <Input className='authorizationFormInput' placeholder="Username" {...Utils.propagateRef(this, 'emailInput')}
                              prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} />
                     </Form.Item>
-                    <Form.Item>
-                      <Input className='authorizationFormInput' placeholder="Password"
-                        type='password' {...Utils.propagateRef(this, 'passwordInput')}
-                             prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} />
-                    </Form.Item>
                   </Form>
                 </Col>
               </Row>
@@ -145,4 +92,49 @@ export default class CommonLoginView extends React.Component {
       </Content>
     );
   }
+
+
+  //Direct login callback -- this should be uncommented if config.externalAuth is not enabled
+  // async idmLoginErrorHandler(loginResp, username, isRenew) {
+  //   if (loginResp.statusCode == 400) {
+  //     this.props.alertController.showAPIErrorAlert(null, loginResp);
+  //   } else if (loginResp.statusCode == 200 || loginResp.statusCode == 401) {
+  //     const challengeState = (loginResp.body && loginResp.body.challengeState ? loginResp.body.challengeState :
+  //                             (loginResp.body && loginResp.body.errCode ? loginResp.body.errCode : ''));
+  //     //Success
+  //     if (challengeState == IDMGlobals.AuthorizationChallengeState_Authorized) {
+  //       this.props.alertController.showSuccessAlert("", `Welcome ${this.props.app.idm.session.data.getUserObject().firstName}!`); //welcome message
+  //       this.props.app.pushPage(config.ApplicationRoutes.homepage); //push to main page
+  //     }
+  //     //Reset pass required
+  //     else if (challengeState == IDMGlobals.AuthorizationChallengeState_PasswordResetRequired) {
+  //       this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
+  //       this.props.app.pushPage(config.ApplicationRoutes.resetPasswordConfirmation, null, username); //push to main page
+  //     }
+  //     //New pass required
+  //     else if (challengeState == IDMGlobals.AuthorizationChallengeState_NewPasswordRequired) {
+  //       this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
+  //       this.props.app.pushPage(config.ApplicationRoutes.setupPassword, null, username, loginResp.body.challengeContext); //push to main page
+  //     }
+  //     //Confirmation required
+  //     else if (challengeState == IDMGlobals.AuthorizationChallengeState_ConfirmationRequired) {
+  //       this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
+  //       console.log(loginResp)
+  //       this.props.app.pushPage(config.ApplicationRoutes.registrationConfirmation, null, Globals.URL_Path_ID_Placeholder, username); //push to main page
+  //     }
+  //     //Handling auth challenges errors
+  //     else if (challengeState != IDMGlobals.AuthorizationChallengeState_Forbidden &&
+  //              challengeState != IDMGlobals.AuthorizationChallengeState_NotFound) {
+  //       this.props.alertController.showWarningAlert('Could not login!', loginResp.body.message);
+  //       this.props.app.pushViewWithState(config.ApplicationRoutes.authError, null, null, null, loginResp.body); //push to main page
+  //     }
+  //     //Unhandled error
+  //     else if (!isRenew) {
+  //       this.props.alertController.showAPIErrorAlert("Login error!", loginResp);
+  //     }
+  //   } else { //probably connection error or server is offline :/
+  //     this.props.alertController.showAPIErrorAlert("Unknown error!", JSON.stringify(loginResp));
+  //   }
+  //   this.stopLoading();
+  // }
 }

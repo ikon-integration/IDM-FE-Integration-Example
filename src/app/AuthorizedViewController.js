@@ -33,7 +33,7 @@ export default class AuthorizedViewController extends React.Component {
     this.props.app.pushPage(config.ApplicationRoutes.login);
   }
   changePassword() {
-    this.props.app.openExternalPage(config.IDMClientOptions.externalAuthDomain + Globals.URL_IDMQueryParam_ChangePassword, true);
+    this.props.app.idm.user.changePassword();
   }
   onCollapse = () => {
     this.setState({ collapsed: !this.state.collapsed });

@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
-    "@ikonintegration/idmclient": "^1.2.0",
+    "@ikonintegration/idmclient": "^2.0.0-beta",
     "antd": "^3.24.2",
     "core-js": "^3.3.5",
     "craco-less": "^1.14.4",
