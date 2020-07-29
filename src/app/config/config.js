@@ -9,7 +9,7 @@ module.exports = {
     //If not enabled, redirect API calls will be done instead.
     externalAuth: true,
     //Used when externalAuth is enabled,
-    externalAuthDomain: 'auth.SUPPRESSED.ca',
+    externalAuthDomain: 'auth-dev.bccsa-services.ca',
     //Fixed pages path on IDM UI, probably this should remain the same if you
     //don't know what they are for.
     externalAuthPath: '/login',
@@ -29,6 +29,7 @@ module.exports = {
       PERSONAL: 'ca.SUPPRESSED.personal',
       PROFESSIONAL: 'ca.SUPPRESSED.professional',
     },
+    autoEnrollRole: ['SUPPRESSED-c7f_CCPO', 'SUPPRESSED-1ef_Shared_Modules'],
   },
   ApplicationName: 'MyApp-Dev',
   ApplicationRoutes: {

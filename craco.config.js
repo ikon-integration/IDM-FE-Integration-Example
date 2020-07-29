@@ -12,11 +12,13 @@ module.exports = {
     plugin: CracoLessPlugin,
     options: {
       lessLoaderOptions: {
-        modifyVars: {
-          '@primary-color': '#af3947',
-          '@link-color': '#ed939f',
-        },
-        javascriptEnabled: true
+        lessOptions: {
+          modifyVars: {
+            '@primary-color': '#af3947',
+            '@link-color': '#ed939f',
+          },
+          javascriptEnabled: true
+        }
       }
     }
   }
