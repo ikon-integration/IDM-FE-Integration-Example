@@ -9,7 +9,7 @@ module.exports = {
     //If not enabled, redirect API calls will be done instead.
     externalAuth: true,
     //Used when externalAuth is enabled,
-    externalAuthDomain: 'auth-dev.bccsa-services.ca',
+    externalAuthDomain: 'auth-dev.XXXX-services.ca',
     //Fixed pages path on IDM UI, probably this should remain the same if you
     //don't know what they are for.
     externalAuthPath: '/login',
