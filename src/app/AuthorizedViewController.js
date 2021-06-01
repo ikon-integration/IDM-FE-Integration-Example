@@ -26,11 +26,18 @@ export default class AuthorizedViewController extends React.Component {
     };
   }
 
+  //life cycle
+  async componentDidMount() {
+    const userObj = await this.props.app.idm.session.data.getUserObject();
+    this.setState({ userObj });
+  }
+
   // Actions
   async handleLogout() {
-    this.startLoading();
-    await this.props.app.idm.authenticator.logout();
-    this.props.app.pushPage(config.ApplicationRoutes.login);
+    this.setState({ isLoading: true }, async () => {
+      await this.props.app.idm.authenticator.logout();
+      this.props.app.pushPage(config.ApplicationRoutes.login);
+    })
   }
   changePassword() {
     this.props.app.idm.user.changePassword();
@@ -100,8 +107,7 @@ export default class AuthorizedViewController extends React.Component {
           <Col> LOGO HERE </Col>
           <Col>
             {this.props.app.idm.isLogged() && (
-              <IDMUserBadge user={this.props.app.idm.session.data.getUserObject()}
-                            changePassword={this.changePassword} logoutHandler={this.handleLogout}/>
+              <IDMUserBadge user={this.state.userObj} changePassword={this.changePassword} logoutHandler={this.handleLogout}/>
             )}
           </Col>
         </Row>

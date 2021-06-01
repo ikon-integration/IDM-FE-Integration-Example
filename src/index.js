@@ -8,8 +8,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './app/App';
 //
 import 'antd/dist/antd.less';
-// DEVEL
-import * as serviceWorker from './serviceWorker';
 // Render router with App
 ReactDOM.render(
   <Router>
@@ -17,5 +15,3 @@ ReactDOM.render(
   </Router>,
   document.getElementById('root')
 );
-// DEVEL
-serviceWorker.unregister();

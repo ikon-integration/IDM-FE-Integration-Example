@@ -103,6 +103,7 @@ export default class CommonLoginView extends React.Component {
   //                             (loginResp.body && loginResp.body.errCode ? loginResp.body.errCode : ''));
   //     //Success
   //     if (challengeState == IDMGlobals.AuthorizationChallengeState_Authorized) {
+    //TODO: change this.props.app.idm.session.data.getUserObject to promise
   //       this.props.alertController.showSuccessAlert("", `Welcome ${this.props.app.idm.session.data.getUserObject().firstName}!`); //welcome message
   //       this.props.app.pushPage(config.ApplicationRoutes.homepage); //push to main page
   //     }

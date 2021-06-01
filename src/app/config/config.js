@@ -9,7 +9,8 @@ module.exports = {
     //If not enabled, redirect API calls will be done instead.
     externalAuth: true,
     //Used when externalAuth is enabled,
-    externalAuthDomain: 'auth-dev.XXXX-services.ca',
+    externalAuthDomain: 'auth-dev.XXXXXX.ca',
+    cookiesEndpoint: 'https://auth-dev.XXXXXX.ca',
     //Fixed pages path on IDM UI, probably this should remain the same if you
     //don't know what they are for.
     externalAuthPath: '/login',
@@ -20,16 +21,16 @@ module.exports = {
     apiEndpoint: 'https://SUPPRESSED.execute-api.ca-central-1.amazonaws.com/dev',
     //What roles I'm using on this app?
     roles: {
-      USER: 'SUPPRESSED-c7f_CCPO',
-      ADMIN: 'SUPPRESSED-99f_CCPO',
-      ADVISOR: 'SUPPRESSED-09c_CCPO',
+      USER: 'SUPPRESSED-c7f_CXXXXXX',
+      ADMIN: 'SUPPRESSED-99f_CXXXXXX',
+      ADVISOR: 'SUPPRESSED-09c_CXXXXXX',
     },
     //What partitions I'm using on this app?
     partitions: {
       PERSONAL: 'ca.SUPPRESSED.personal',
       PROFESSIONAL: 'ca.SUPPRESSED.professional',
     },
-    autoEnrollRole: ['SUPPRESSED-c7f_CCPO', 'SUPPRESSED-1ef_Shared_Modules'],
+    autoEnrollRole: ['SUPPRESSED-c7f_CXXXXXX', 'SUPPRESSED-1ef_Shared_Modules'],
   },
   ApplicationName: 'MyApp-Dev',
   ApplicationRoutes: {
